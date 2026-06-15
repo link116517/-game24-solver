@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题目详情 - 题库管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .question-detail {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+        
+        .question-type {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        
+        .question-content {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .options-section {
+            margin-top: 30px;
+        }
+        
+        .options-title {
+            font-size: 1.2em;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .option-item {
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+        
+        .option-item:hover {
+            background: #e8eaf6;
+            transform: translateX(5px);
+        }
+        
+        .answer-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-radius: 10px;
+            border-left: 5px solid #ff9800;
+        }
+        
+        .answer-label {
+            font-weight: bold;
+            color: #ff9800;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .answer-content {
+            font-size: 1.2em;
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .answer-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .answer-tag {
+            background: #ff9800;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="question-detail">
+            <div class="question-header">
+                <span class="question-number">第 {{ question.question_number }} 题</span>
+                <span class="question-type">{{ question.question_type }}</span>
+            </div>
+            
+            <div class="question-content">
+                {{ question.content }}
+            </div>
+            
+            {% if question.options %}
+            <div class="options-section">
+                <div class="options-title">选项：</div>
+                {% for option in question.options %}
+                <div class="option-item">{{ option }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if question.answer %}
+            <div class="answer-section">
+                <div class="answer-label">📝 正确答案：</div>
+                <div class="answer-content">
+                    {% set answers = question.answer.split('、') %}
+                    <div class="answer-items">
+                        {% for ans in answers %}
+                        <span class="answer-tag">{{ ans }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="action-buttons">
+                <a href="/questions" class="btn btn-secondary">返回列表</a>
+                <a href="/practice" class="btn btn-primary">开始练习</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题库管理系统 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .stats-card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .stat-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            background: white;
+            border: none;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        
+        .btn h3 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        
+        .btn p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .type-distribution {
+            margin-top: 20px;
+        }
+        
+        .type-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .type-name {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .type-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 题库管理系统</h1>
+            <p>智能题库管理与在线答题平台</p>
+        </div>
+        
+        <div class="stats-card">
+            <h2>📊 题库概览</h2>
+            
+            <div class="stat-item">
+                <span class="stat-label">题目总数</span>
+                <span class="stat-value">{{ stats.total_questions }} 道</span>
+            </div>
+            
+            <div class="type-distribution">
+                <h3 style="margin: 20px 0 10px 0; color: #667eea;">题型分布</h3>
+                {% for qtype, count in stats.type_distribution.items() %}
+                <div class="type-item">
+                    <span class="type-name">{{ qtype }}</span>
+                    <span class="type-count">{{ count }} 道</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/quiz" class="btn btn-warning">
+                <h3>🎯 在线答题</h3>
+                <p>输入答案，自动判题，实时得分</p>
+            </a>
+            
+            <a href="/questions" class="btn btn-primary">
+                <h3>📝 浏览题目</h3>
+                <p>查看所有题目，支持分类筛选</p>
+            </a>
+            
+            <a href="/practice" class="btn btn-success">
+                <h3>✏️ 练习模式</h3>
+                <p>随机抽取题目进行练习</p>
+            </a>
+            
+            <a href="/export" class="btn btn-info">
+                <h3>💾 导出题库</h3>
+                <p>导出为Excel或JSON格式</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题目列表 - 题库管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-bar label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .filter-bar select {
+            padding: 8px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        
+        .filter-bar select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .question-type {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .question-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .question-options {
+            margin-top: 15px;
+        }
+        
+        .option-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-left: 3px solid #667eea;
+            border-radius: 5px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .pagination .current {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .info-text {
+            text-align: center;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 题目列表</h1>
+            <p>共 {{ total }} 道题目</p>
+        </div>
+        
+        <div class="filter-bar">
+            <label for="type-filter">题型筛选：</label>
+            <select id="type-filter" onchange="filterByType()">
+                <option value="">全部题型</option>
+                <option value="填空题" {% if current_type == '填空题' %}selected{% endif %}>填空题</option>
+                <option value="选择题" {% if current_type == '选择题' %}selected{% endif %}>选择题</option>
+                <option value="判断题" {% if current_type == '判断题' %}selected{% endif %}>判断题</option>
+                <option value="简答题" {% if current_type == '简答题' %}selected{% endif %}>简答题</option>
+            </select>
+            
+            <span class="info-text">第 {{ page }}/{{ total_pages }} 页</span>
+        </div>
+        
+        {% for question in questions %}
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">第 {{ question.question_number }} 题</span>
+                <span class="question-type">{{ question.question_type }}</span>
+            </div>
+            <div class="question-content">
+                {{ question.content }}
+            </div>
+            {% if question.options %}
+            <div class="question-options">
+                {% for option in question.options %}
+                <div class="option-item">{{ option }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="?page={{ page - 1 }}&type={{ current_type }}">上一页</a>
+            {% endif %}
+            
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                <span class="current">{{ p }}</span>
+                {% elif p <= 3 or p > total_pages - 2 or (p >= page - 1 and p <= page + 1) %}
+                <a href="?page={{ p }}&type={{ current_type }}">{{ p }}</a>
+                {% elif p == page - 2 or p == page + 2 %}
+                <span>...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page < total_pages %}
+            <a href="?page={{ page + 1 }}&type={{ current_type }}">下一页</a>
+            {% endif %}
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/" class="back-btn">返回首页</a>
+        </div>
+    </div>
+    
+    <script>
+        function filterByType() {
+            const type = document.getElementById('type-filter').value;
+            window.location.href = `/questions?type=${type}&page=1`;
+        }
+    </script>
+</body>
+</html>

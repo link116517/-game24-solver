@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>练习模式 - 题库管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .progress-track {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .question-type {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .question-content {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .fill-blank-hint {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .options-section {
+            margin-top: 20px;
+        }
+        
+        .option-item {
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+        
+        .option-item:hover {
+            background: #e8eaf6;
+            transform: translateX(5px);
+        }
+        
+        .option-item.selected {
+            background: #667eea;
+            color: white;
+            border-left-color: #764ba2;
+        }
+        
+        .answer-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff3e0;
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+            display: none;
+        }
+        
+        .answer-section.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .answer-label {
+            font-weight: bold;
+            color: #ff9800;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .answer-content {
+            font-size: 1.2em;
+            color: #333;
+            line-height: 1.8;
+            font-weight: bold;
+        }
+        
+        .answer-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .answer-tag {
+            background: #ff9800;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1em;
+            display: inline-block;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: none;
+        }
+        
+        .result-card.show {
+            display: block;
+        }
+        
+        .result-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .result-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #4caf50;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ 练习模式</h1>
+            <p>随机抽取 {{ questions|length }} 道题目进行练习</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-info">
+                <span>进度</span>
+                <span id="progress-text">1 / {{ questions|length }}</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill" style="width: {{ 100 / questions|length }}%"></div>
+            </div>
+        </div>
+        
+        {% for question in questions %}
+        <div class="question-card {% if loop.first %}active{% endif %}" data-question-index="{{ loop.index0 }}">
+            <div class="question-header">
+                <span class="question-number">第 {{ question.question_number }} 题</span>
+                <span class="question-type">{{ question.question_type }}</span>
+            </div>
+            
+            <div class="question-content">
+                {{ question.content }}
+            </div>
+            
+            {% if question.question_type == '填空题' and question.answer %}
+            <div class="fill-blank-hint">
+                💡 提示：请在括号中填入正确答案（多个答案用顿号、分隔）
+            </div>
+            {% elif question.question_type == '简答题' and question.answer %}
+            <div class="fill-blank-hint">
+                💡 提示：请用自己的话回答这个问题
+            </div>
+            {% endif %}
+            
+            {% if question.options %}
+            <div class="options-section">
+                {% for option in question.options %}
+                <div class="option-item" onclick="selectOption(this, {{ loop.index0 }})">
+                    {{ option }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="answer-section" id="answer-{{ loop.index0 }}">
+                <div class="answer-label">📝 正确答案：</div>
+                <div class="answer-content">
+                    {% if question.answer %}
+                        {% set answers = question.answer.split('、') %}
+                        <div class="answer-items">
+                            {% for ans in answers %}
+                            <span class="answer-tag">{{ ans }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        暂无答案
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="result-card" id="result-card">
+            <div class="result-title">🎉 练习完成！</div>
+            <p>你已经完成了所有题目的练习</p>
+            <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 20px;">
+                重新开始
+            </button>
+        </div>
+        
+        <div class="navigation" id="navigation">
+            <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()" disabled>
+                上一题
+            </button>
+            <button class="btn btn-success" id="show-answer-btn" onclick="showAnswer()">
+                查看答案
+            </button>
+            <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">
+                下一题
+            </button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/" class="btn btn-secondary" style="text-decoration: none;">返回首页</a>
+        </div>
+    </div>
+    
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = {{ questions|length }};
+        
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = `${currentQuestion + 1} / ${totalQuestions}`;
+        }
+        
+        function showQuestion(index) {
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-question-index="${index}"]`).classList.add('active');
+            
+            document.getElementById('prev-btn').disabled = index === 0;
+            document.getElementById('next-btn').textContent = index === totalQuestions - 1 ? '完成' : '下一题';
+            
+            updateProgress();
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                document.getElementById('result-card').classList.add('show');
+                document.getElementById('navigation').style.display = 'none';
+                document.querySelectorAll('.question-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+            }
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+        
+        function selectOption(element, optionIndex) {
+            const parent = element.parentElement;
+            parent.querySelectorAll('.option-item').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+        
+        function showAnswer() {
+            document.getElementById(`answer-${currentQuestion}`).classList.add('show');
+        }
+        
+        // 键盘导航
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                previousQuestion();
+            } else if (e.key === ' ' || e.key === 'Enter') {
+                showAnswer();
+            }
+        });
+    </script>
+</body>
+</html>

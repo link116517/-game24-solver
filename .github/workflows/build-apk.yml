@@ -1,0 +1,100 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install buildozer cython
+
+    - name: Cache Android SDK
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.buildozer
+          ~/.android
+        key: ${{ runner.os }}-android-${{ hashFiles('buildozer.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-android-
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          git \
+          ffmpeg \
+          libsdl2-dev \
+          libsdl2-image-dev \
+          libsdl2-mixer-dev \
+          libsdl2-ttf-dev \
+          libportmidi-dev \
+          libswscale-dev \
+          libavformat-dev \
+          libavcodec-dev \
+          zlib1g-dev \
+          libgstreamer1.0 \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          openjdk-17-jdk \
+          autoconf \
+          automake \
+          libtool
+
+    - name: Build APK
+      run: |
+        chmod +x build_apk.sh
+        ./build_apk.sh
+      env:
+        ANDROID_HOME: /usr/local/lib/android/sdk
+        ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Game24Solver-APK
+        path: bin/*.apk
+        if-no-files-found: error
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: bin/*.apk
+        body: |
+          ## 24点游戏求解器 v${{ github.ref_name }}
+          
+          ### 功能特点
+          - ✅ 输入4个数字（1-10），自动求解24点
+          - ✅ 支持所有可能的四则运算组合
+          - ✅ 专为手机优化的触控界面
+          - ✅ 简洁美观的英文界面
+          
+          ### 安装说明
+          下载APK文件后，在Android手机上安装即可使用。
+          
+          ### 系统要求
+          - Android 5.0 或更高版本
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
