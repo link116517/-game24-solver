@@ -66,8 +66,7 @@ jobs:
 
     - name: Build APK
       run: |
-        chmod +x build_apk.sh
-        ./build_apk.sh
+        buildozer -v android debug
       env:
         ANDROID_HOME: /usr/local/lib/android/sdk
         ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
