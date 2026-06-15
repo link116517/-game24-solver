@@ -48,9 +48,6 @@ arch = armeabi-v7a,arm64-v8a
 # Icon
 icon.filename = %(source.dir)s/icon.png
 
-# Splash screen
-presplash.filename = %(source.dir)s/splash.png
-
 # OUYA support
 ouya.category = GAME
 
