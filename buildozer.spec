@@ -6,11 +6,14 @@ title = 24点游戏求解器
 # Package name
 package.name = game24solver
 
-# Package domain (version)
+# Package domain
 package.domain = org.game24
 
 # Source code directory
 source.dir = .
+
+# Main file
+source.main = game_24_mobile.py
 
 # Source files to include
 source.include_exts = py,png,jpg,kv,atlas
@@ -18,8 +21,8 @@ source.include_exts = py,png,jpg,kv,atlas
 # App version
 version = 1.0.0
 
-# Requirements (dependencies)
-requirements = python3,kivy
+# Requirements
+requirements = python3,kivy,hostpython3,cython
 
 # Orientation
 orientation = portrait
@@ -28,10 +31,10 @@ orientation = portrait
 fullscreen = 0
 
 # Android permissions
-android.permissions = 
+android.permissions = INTERNET
 
 # Android API level
-android.api = 30
+android.api = 33
 
 # Android minimum API level
 android.minapi = 21
@@ -39,17 +42,17 @@ android.minapi = 21
 # Android NDK version
 android.ndk = 25b
 
+# Android SDK version
+android.sdk = 33
+
 # Bootstrap
 bootstrap = sdl2
 
 # Architecture
-arch = armeabi-v7a,arm64-v8a
+android.archs = arm64-v8a, armeabi-v7a
 
 # Icon
 icon.filename = %(source.dir)s/icon.png
-
-# OUYA support
-ouya.category = GAME
 
 # Debug mode
 debug = 0
@@ -71,6 +74,3 @@ android.entrypoint = org.kivy.android.PythonActivity
 
 # Android app theme
 android.apptheme = "@android:style/Theme.NoTitleBar"
-
-# Window background
-window.background_color = 242, 242, 242, 1
