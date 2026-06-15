@@ -12,14 +12,14 @@ on:
 jobs:
   build-apk:
     name: Build Android APK
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
@@ -29,7 +29,7 @@ jobs:
         pip install buildozer cython
 
     - name: Cache Android SDK
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/.buildozer
@@ -60,7 +60,9 @@ jobs:
           openjdk-17-jdk \
           autoconf \
           automake \
-          libtool
+          libtool \
+          libltdl-dev \
+          pkg-config
 
     - name: Build APK
       run: |
@@ -71,7 +73,7 @@ jobs:
         ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
 
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Game24Solver-APK
         path: bin/*.apk
@@ -86,10 +88,10 @@ jobs:
           ## 24点游戏求解器 v${{ github.ref_name }}
           
           ### 功能特点
-          - ✅ 输入4个数字（1-10），自动求解24点
-          - ✅ 支持所有可能的四则运算组合
-          - ✅ 专为手机优化的触控界面
-          - ✅ 简洁美观的英文界面
+          - 输入4个数字（1-10），自动求解24点
+          - 支持所有可能的四则运算组合
+          - 专为手机优化的触控界面
+          - 简洁美观的界面
           
           ### 安装说明
           下载APK文件后，在Android手机上安装即可使用。
