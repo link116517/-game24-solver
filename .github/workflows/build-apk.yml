@@ -62,11 +62,18 @@ jobs:
           automake \
           libtool \
           libltdl-dev \
-          pkg-config
+          pkg-config \
+          libffi-dev \
+          libssl-dev
+
+    - name: Fix permissions
+      run: |
+        mkdir -p ~/.buildozer
+        chmod -R 755 .
 
     - name: Build APK
       run: |
-        buildozer -v android debug
+        buildozer android debug
       env:
         ANDROID_HOME: /usr/local/lib/android/sdk
         ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
